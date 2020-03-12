@@ -1,2 +1,2 @@
-# risco_fuzzy_mc
-demusis/risco_fuzzy_mc
+# Análise de risco utilizando lógica fuzzy e o método de Monte Carlo
+
