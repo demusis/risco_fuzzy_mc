@@ -4,7 +4,7 @@ from skfuzzy import control as ctrl
 
 
 # ANTECEDENTES -
-# Varíável Fuzzy Gaussiana Padronizada
+# Varíável Fuzzy Gaussiana Padronizada -
 class VFGP:
     # Inicializa VFGP
     def __init__(self, minm, maxm, n_variavel, passo=0.01, likert=3, tipo='antecedente', dados=None):
