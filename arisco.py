@@ -9,8 +9,8 @@ class VFGP:
     # Inicializa VFGP
     def __init__(self, minm, maxm, n_variavel, passo=0.01, likert=3, tipo='antecedente', dados=None):
         # dados: vetor de dados de referência.
-        # minm: valor mínimo.
-        # maxm: valor máximo.
+        # minm: valor mínimo.git init
+        # maxm: valor máximo...
         # n_variavel: nome da variavel.
         # passo: nível de discretização da variável fuzzy.
         # tipo: tipo de variável fuzzy.
