@@ -6,7 +6,7 @@ from skfuzzy import control as ctrl
 # Varíável Fuzzy Gaussiana Padronizada -
 class variavelFGP:
     # Inicializa VFGP
-    def __init__(self, minm, maxm, n_variavel, passo=0.01, likert=3, tipo='antecedente', dados=None):
+    def __init__(self, minm, maxm, n_variavel, media=None, dp=None, dados=None, passo=0.01, likert=3, tipo='antecedente'):
         # dados: vetor de dados de referência.
         # minm: valor mínimo.git init.
         # maxm: valor máximo.
@@ -23,13 +23,19 @@ class variavelFGP:
         try:
            self.media = dados.mean()
            self.dp = dados.std()
+           media = self.media
+           dp = self.dp
         except Exception:
-           self.media = (minm+maxm)/2
-           self.dp = ((maxm - minm)**2/12)**0.5
+           try: 
+              self.media = media*1
+              self.dp = dp*1
+           except Exception:
+              self.media = (minm+maxm)/2
+              self.dp = ((maxm - minm)**2/12)**0.5
+              media = self.media
+              dp = self.dp
 
-        media = self.media
-        dp = self.dp
-
+        
         if tipo == 'consequente':
             self.vf = ctrl.Consequent(np.arange(minm, maxm, passo), n_variavel)
         else:
@@ -271,23 +277,32 @@ class variavel:
     def __init__(self, n_variavel):
         # n_variavel: nome da variavel.
         self.n_variavel = n_variavel
-        self.referenciaValor = float('nan')   # NaN ("not a number")
-        self.Valor = float('nan')   # NaN ("not a number")
+        self.referencia_valor = float('nan')   # NaN ("not a number")
+        self.valor = float('nan')   # NaN ("not a number")
     # Altera valor corrente
     def setaValor(self, valor):
         self.valor = valor
 
     # Altera valor de referência
     def setaReferencia(self, valor):
-        self.referenciaValor = valor
+        self.referencia_valor = valor
 
-    # Retorna valor corrente
+    # Retorna referência.
+    def obtemReferencia(self):
+        return self.referencia_valor
+
+    # Retorna valor corrente.
     def obtemValor(self):
         return self.valor
 
     # Reinicia o valor corrente
     def reiniciaValor(self):
-        self.valor = self.referenciaValor
+        self.valor = self.referencia_valor
+
+    # Apresenta variável
+    def apresentaVariavel(self):
+        print('Variável: ', self.n_variavel, ', Ref.: ', self.obtemReferencia(), ', Valor: ', self.obtemValor())   
+
 
 class variaveis:
     # Inicializa lista de variaveis.
@@ -303,13 +318,27 @@ class variaveis:
         for aux_variavel in self.l_variaveis:
             aux_variavel.reiniciaValor()
 
+    # Reinicia referências
+    def reiniciaReferencias(self, referencias):
+        for aux_n, aux_variavel in enumerate(self.l_variaveis):
+            aux_variavel.setaReferencia(referencias[aux_n])
+
+    # Obtêm variáveis
+    def obtemVariaveis(self):
+        return self.l_variaveis
+
     # Obtêm variável
-    def obtemVariável(self, num_variavel):
+    def obtemVariavel(self, num_variavel):
         return self.l_variaveis[num_variavel]
 
     # Obtêm valor
     def obtemValor(self, num_variavel):
         return self.l_variaveis[num_variavel].obtemValor()
+
+    # Apresenta valores
+    def apresentaVariaveis(self):
+        for aux_variavel in self.l_variaveis:
+            aux_variavel.apresentaVariavel()
 
 
 class evento:
@@ -377,9 +406,4 @@ class eventos:
     def processaEventos(self):
         for aux_evento in self.l_eventos:
             aux_evento.ponderaVariaveis()
-        
-
-
-    
-        
         
