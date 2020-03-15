@@ -271,13 +271,45 @@ class variavel:
     def __init__(self, n_variavel):
         # n_variavel: nome da variavel.
         self.n_variavel = n_variavel
-        self.valor = float('nan')   # NaN ("not a number")
-
+        self.referenciaValor = float('nan')   # NaN ("not a number")
+        self.Valor = float('nan')   # NaN ("not a number")
+    # Altera valor corrente
     def setaValor(self, valor):
         self.valor = valor
 
+    # Altera valor de referência
+    def setaReferencia(self, valor):
+        self.referenciaValor = valor
+
+    # Retorna valor corrente
     def obtemValor(self):
         return self.valor
+
+    # Reinicia o valor corrente
+    def reiniciaValor(self):
+        self.valor = self.referenciaValor
+
+class variaveis:
+    # Inicializa lista de variaveis.
+    def __init__(self):
+        self.l_variaveis = []
+
+    # Insere variavel.
+    def insereVariavel(self, variavel):
+        self.l_variaveis.append(variavel)
+
+    # Reinicia variaveis
+    def reiniciaVariaveis(self):
+        for aux_variavel in self.l_variaveis:
+            aux_variavel.reiniciaValor()
+
+    # Obtêm variável
+    def obtemVariável(self, num_variavel):
+        return self.l_variaveis[num_variavel]
+
+    # Obtêm valor
+    def obtemValor(self, num_variavel):
+        return self.l_variaveis[num_variavel].obtemValor()
 
 
 class evento:
@@ -286,10 +318,14 @@ class evento:
         # Lista de variáveis
         self.l_variaveis = []
 
-    # Insere na lista variável afetada pelo evento
+    # Insere na lista uma variável afetada pelo evento.
     def insereVariavel(self, variavel, ponderador):
         aux_evento_ponderado = {'variavel': variavel, 'ponderador': ponderador}
-        self.l_variaveis.append(aux_evento_ponderado)
+        self.l_variaveis.append(aux_evento_ponderado)        
+
+    # Simula um evento
+    def simulaEvento(self):
+        return 0 # Padrão: evento impossível
 
     # Simula o evento e pondera o seu efeito nas variáveis inseridas
     def ponderaVariaveis(self):
@@ -299,10 +335,6 @@ class evento:
                 aux_variavel['variavel'].setaValor(aux_variavel['variavel'].obtemValor()*
                                                    (1 + aux_variavel['ponderador'])*
                                                    oc_evento)
-
-    # Simula um evento
-    def simulaEvento(self):
-        return 0 # Padrão: evento impossível
 
 
 # Evento aleatório conforme a distribuição de Bernoulli.
@@ -334,19 +366,17 @@ class eventoPoisson(evento):
 # Lista de eventos.
 class eventos:
     # Inicializa lista de eventos.
-    def __init__(self, n_variavel):
-    # n_variavel: nome da variável.
+    def __init__(self):
         self.l_eventos = []
 
     # Insere evento.
-    def insere_evento(self, evento):
+    def insereEvento(self, evento):
         self.l_eventos.append(evento)
 
     # Processa eventos
-    def processa_evento(self, evento):
-        aux_p = []
+    def processaEventos(self):
         for aux_evento in self.l_eventos:
-            aux_p.append(aux_evento.calculaF())
+            aux_evento.ponderaVariaveis()
         
 
 
