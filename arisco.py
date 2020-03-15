@@ -3,30 +3,10 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
-<<<<<<< HEAD
-# ANTECEDENTES -
+# ANTECEDENTES
 # Varíável Fuzzy Gaussiana Padronizada -
 class VFGP:
     # Inicializa VFGP
-=======
-# Variável
-class variavel:
-    def __init__(self, n_variavel):
-        # n_variavel: nome da variavel.
-        self.n_variavel = n_variavel
-        self.valor = float('nan')   # NaN ("not a number")
-
-    def setaValor(self, valor):
-        self.valor = valor
-
-    def obtemValor(self):
-        return self.valor
-
-
-# Variável Fuzzy Gaussiana Padronizada.
-class variavelFGP:
-    # Inicializa VFGP.
->>>>>>> ab332d4ac59d5ea6fe5bda452813184450cde30d
     def __init__(self, minm, maxm, n_variavel, passo=0.01, likert=3, tipo='antecedente', dados=None):
         # dados: vetor de dados de referência.
         # minm: valor mínimo.git init.
