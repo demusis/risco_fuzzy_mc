@@ -3,9 +3,8 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
-# ANTECEDENTES
 # Varíável Fuzzy Gaussiana Padronizada -
-class VFGP:
+class variavelFGP:
     # Inicializa VFGP
     def __init__(self, minm, maxm, n_variavel, passo=0.01, likert=3, tipo='antecedente', dados=None):
         # dados: vetor de dados de referência.
@@ -266,59 +265,89 @@ class sistemaFuzzy:
                          [alfa / 2, .5, 1 - alfa / 2])
         return ic
 
-    class evento:
-        def __init__(self, variavel):
-            # Variavel fuzzy.
-            self.variavel = variavel
+
+# Variável
+class variavel:
+    def __init__(self, n_variavel):
+        # n_variavel: nome da variavel.
+        self.n_variavel = n_variavel
+        self.valor = float('nan')   # NaN ("not a number")
+
+    def setaValor(self, valor):
+        self.valor = valor
+
+    def obtemValor(self):
+        return self.valor
 
 
-    # Evento aleatório conforme a distribuição de Bernoulli.
-    class eventoBernoulli:
-        # Inicializa evento
-        def __init__(self, p, f, variavel):
-            # p: probabilidade de um evento favorável.
-            # f: ponderador.
-            super().__init__(self, variavel)
-            self.p = p
-            self.f = 1 + f
-        
-        # Retorna f ou 1
-        def calculaF(self):
-            aux = np.random.binomial(1, p=self.p)
-            if (aux==0):
-               aux = self.f
-            return aux
- 
+class evento:
+    # Inicialisa evento base
+    def __init__(self):
+        # Lista de variáveis
+        self.l_variaveis = []
 
-    # Evento aleatório conforme a distribuição de Poisson.
-    class eventoPoisson:
-        # Inicializa evento.
-        def __init__(self, l, f, variavel):
-            # p: probabilidade de um evento favorável.
-            # f: ponderador.
-            super().__init__(self, variavel)
-            self.l = l
-            self.f = f
-        
-        # Retorna n*f ou 1 conforme a simulação.
-        def calculaF(self):
-            aux = np.random.poisson(self.l, 1)
-            return aux*self.f
-        
+    # Insere na lista variável afetada pelo evento
+    def insereVariavel(self, variavel, ponderador):
+        aux_evento_ponderado = {'variavel': variavel, 'ponderador': ponderador}
+        self.l_variaveis.append(aux_evento_ponderado)
+
+    # Simula o evento e pondera o seu efeito nas variáveis inseridas
+    def ponderaVariaveis(self):
+        oc_evento = self.simulaEvento()
+        if oc_evento!=0: 
+            for aux_variavel in self.l_variaveis:
+                aux_variavel['variavel'].setaValor(aux_variavel['variavel'].obtemValor()*
+                                                   (1 + aux_variavel['ponderador'])*
+                                                   oc_evento)
+
+    # Simula um evento
+    def simulaEvento(self):
+        return 0 # Padrão: evento impossível
+
+
+# Evento aleatório conforme a distribuição de Bernoulli.
+class eventoBernoulli(evento):
+    # Inicializa evento
+    def __init__(self, p):
+        # p: probabilidade de um evento favorável.
+        super().__init__()
+        self.p = p
     
-    # Lista de eventos.
-    class eventos:
-        # Inicializa lista de eventos.
-        def __init__(self, n_variavel):
-        # n_variavel: nome da variável.
-            self.l_eventos = []
+    # Simula evento binomial
+    def simulaEvento(self):
+        return np.random.binomial(1, p=self.p)
 
-        # Insere evento.
-        def insere_evento(self, evento):
-            self.l_eventos.append(evento)
 
-        # Processa eventos
+# Evento aleatório conforme a distribuição de Poisson.
+class eventoPoisson(evento):
+    # Inicializa evento.
+    def __init__(self, l):
+        # l: média de eventos por episódio.
+        super().__init__()
+        self.l = l
+    
+    # Simula o número de eventos favoráveis
+    def calculaF(self):
+        return np.random.poisson(self.l, 1)
 
+
+# Lista de eventos.
+class eventos:
+    # Inicializa lista de eventos.
+    def __init__(self, n_variavel):
+    # n_variavel: nome da variável.
+        self.l_eventos = []
+
+    # Insere evento.
+    def insere_evento(self, evento):
+        self.l_eventos.append(evento)
+
+    # Processa eventos
+    def processa_evento(self, evento):
+        aux_p = []
+        for aux_evento in self.l_eventos:
+            aux_p.append(aux_evento.calculaF())
+        
 
 
     
