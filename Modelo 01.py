@@ -35,7 +35,7 @@ df.head()
 # In[5]:
 
 
-i_01 = arisco.SF(0, 100, n_variavel="Impacto")
+i_01 = arisco.sistemaFuzzy(0, 100, n_variavel="Impacto")
 # p_01 = arisco.SF(0.5, 0.25, 0, 1, "Probabilidade")
 
 
@@ -48,9 +48,9 @@ print(df.Km2.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='linear'))
 
 sns.distplot(df.Km2)
 
-Area = arisco.VFTP(df.Km2, 0, df.Km2.max(), 'Area')
+Area = arisco.variavelFTP(df.Km2, 0, df.Km2.max(), 'Area')
 
-i_01.insere_var(Area)
+i_01.insereVariavel(Area)
 
 
 # In[7]:
@@ -62,9 +62,9 @@ print(df.Combustivel.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='l
 
 sns.distplot(df.Combustivel)
 
-Combustivel = arisco.VFTP(df.Combustivel, 0, 1, 'Combustivel')
+Combustivel = arisco.variavelFTP(df.Combustivel, 0, 1, 'Combustivel')
 
-i_01.insere_var(Combustivel)
+i_01.insereVariavel(Combustivel)
 
 
 # In[8]:
@@ -76,9 +76,9 @@ print(df.Vizinhanca.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='li
 
 sns.distplot(df.Vizinhanca)
 
-Vizinhanca = arisco.VFTP(df.Vizinhanca, 0, 1, 'Vizinhanca', likert=2)
+Vizinhanca = arisco.variavelFTP(df.Vizinhanca, 0, 1, 'Vizinhanca', likert=2)
 
-i_01.insere_var(Vizinhanca)
+i_01.insereVariavel(Vizinhanca)
 
 
 # In[9]:
@@ -90,9 +90,9 @@ print(df.Gestao.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='linear
 
 sns.distplot(df.Gestao)
 
-Gestao = arisco.VFTP(df.Gestao, 0, 1, 'Gestao')
+Gestao = arisco.variavelFTP(df.Gestao, 0, 1, 'Gestao')
 
-i_01.insere_var(Gestao)
+i_01.insereVariavel(Gestao)
 
 
 # In[10]:
@@ -113,9 +113,9 @@ print(df.Renda.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='linear'
 
 sns.distplot(df.Renda)
 
-Renda = arisco.VFTP(df.Renda, 0, 1, 'Renda')
+Renda = arisco.variavelFTP(df.Renda, 0, 1, 'Renda')
 
-i_01.insere_var(Renda)
+i_01.insereVariavel(Renda)
 
 
 # In[12]:
@@ -141,8 +141,8 @@ print(df.Precipitacao.mean(), df.Precipitacao.std(), df.Precipitacao.min(), df.P
 
 print(df.Pressao.mean(), df.Pressao.std(), df.Pressao.min(), df.Pressao.max())
 
-Pressao = arisco.VFGP(df.Pressao.min(), df.Pressao.max(), 'Pressao', dados=df.Pressao)
-i_01.insere_var(Pressao)
+Pressao = arisco.variavelFGP(df.Pressao.min(), df.Pressao.max(), 'Pressao', dados=df.Pressao)
+i_01.insereVariavel(Pressao)
 
 
 # In[15]:
@@ -154,27 +154,27 @@ print(df.Evaporacao.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='li
 
 sns.distplot(df.Evaporacao)
 
-Evaporacao = arisco.VFGP(df.Evaporacao.min(), df.Evaporacao.max(), 'Evaporacao', dados=df.Evaporacao)
+Evaporacao = arisco.variavelFGP(df.Evaporacao.min(), df.Evaporacao.max(), 'Evaporacao', dados=df.Evaporacao)
 
-i_01.insere_var(Evaporacao)
+i_01.insereVariavel(Evaporacao)
 
 
 # In[16]:
 
 
-i_01.graficos_var()
+i_01.graficosVariaveis()
 
 
 # In[17]:
 
 
-i_01.basico_regras()
+i_01.basicoRegras()
 
 
 # In[18]:
 
 
-i_01.inicializa_simulacao()
+i_01.inicializaSimulacao()
 
 
 # In[19]:
@@ -183,7 +183,7 @@ i_01.inicializa_simulacao()
 print('- Impacto ----')
 # Área, combustível, vizinhança, gestão, renda, pressão e evaporação.
 aux_i = np.array([[10, 0.3, 0.2, 0.2, 0.4, 992, 12]])
-print(i_01.calcula_simulacao(aux_i))
+print(i_01.calculaSimulacao(aux_i))
 print('-----')
 
 
@@ -191,7 +191,7 @@ print('-----')
 
 
 # MC
-ic_i_01 = i_01.ic_mc_simulacao()
+ic_i_01 = i_01.icMCSimulacao()
 
 print(ic_i_01)
 

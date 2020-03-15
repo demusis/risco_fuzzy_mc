@@ -3,13 +3,33 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
+<<<<<<< HEAD
 # ANTECEDENTES -
 # Varíável Fuzzy Gaussiana Padronizada -
 class VFGP:
     # Inicializa VFGP
+=======
+# Variável
+class variavel:
+    def __init__(self, n_variavel):
+        # n_variavel: nome da variavel.
+        self.n_variavel = n_variavel
+        self.valor = float('nan')   # NaN ("not a number")
+
+    def setaValor(self, valor):
+        self.valor = valor
+
+    def obtemValor(self):
+        return self.valor
+
+
+# Variável Fuzzy Gaussiana Padronizada.
+class variavelFGP:
+    # Inicializa VFGP.
+>>>>>>> ab332d4ac59d5ea6fe5bda452813184450cde30d
     def __init__(self, minm, maxm, n_variavel, passo=0.01, likert=3, tipo='antecedente', dados=None):
         # dados: vetor de dados de referência.
-        # minm: valor mínimo.
+        # minm: valor mínimo.git init.
         # maxm: valor máximo.
         # n_variavel: nome da variavel.
         # passo: nível de discretização da variável fuzzy.
@@ -66,7 +86,7 @@ class VFGP:
 
 
 # Varíável Fuzzy Binomial Padronizada
-class VFBP:
+class variavelFBP:
     # Inicializa VFBP
     def __init__(self, p, n_variavel, tipo='antecedente'):
         # p: probabilidade de evento favorável.
@@ -100,7 +120,7 @@ class VFBP:
         return list(self.vf.terms)
 
 # Varíável Fuzzy Triangular Padronizada
-class VFTP:
+class variavelFTP:
     # Inicializa VFTP.
     def __init__(self, minm, maxm, n_variavel, passo=0.01, tipo='antecedente', likert=3, dados=None):
         # dados: vetor de dados de referência.
@@ -161,61 +181,61 @@ class VFTP:
 
 
 # Sistema Fuzzy.
-class SF:
+class sistemaFuzzy:
     # Inicializa sistema fuzzy.
     def __init__(self, minm, maxm, n_variavel, likert=3):
         self.min = minm
         self.max = maxm
 
-        # Lista vazia de variáveis fuzzy
+        # Lista vazia de variáveis fuzzy.
         self.l_v_f = []
 
         # Define variável consequente.
-        self.c_v_f = VFGP(minm, maxm, n_variavel, tipo='consequente', likert=likert)
+        self.c_v_f = variavelFGP(minm, maxm, n_variavel, tipo='consequente', likert=likert)
 
         # Lista vazia de regras fuzzy.
         self.l_r_f = []
 
     # Insere variável.
-    def insere_var(self, v_f):
+    def insereVariavel(self, v_f):
         self.l_v_f.append(v_f)
 
     # Insere regra
-    def insere_regra(self, r_f):
+    def insereRegra(self, r_f):
         self.l_r_f.append(r_f)
 
     # Apresenta gráficos de fuzificação das variáveis.
-    def graficos_var(self):
+    def graficosVariaveis(self):
         for aux_v_f in self.l_v_f:
             aux_v_f.grafico()
         self.c_v_f.grafico()
 
     # Cria e insere conjunto básico de regras.
-    def basico_regras(self):
+    def basicoRegras(self):
         for aux_v_f in self.l_v_f:
             for chave in aux_v_f.chaves():
-                self.insere_regra(ctrl.Rule(aux_v_f.vf[chave],
-                                            self.c_v_f.vf[chave]))
+                self.insereRegra(ctrl.Rule(aux_v_f.vf[chave],
+                                           self.c_v_f.vf[chave]))
         # print(self.l_r_f)
 
     # Inicializa sistema e simulação.
-    def inicializa_simulacao(self):
+    def inicializaSimulacao(self):
         self.ctrl_v_f = ctrl.ControlSystem(self.l_r_f)
         self.sim_v_f = ctrl.ControlSystemSimulation(self.ctrl_v_f) # Cria simulação
         # self.ctrl_v_f.view()
 
     # Lista variáveis antecedentes.
-    def lista_antecedentes(self):
+    def listaAntecedentes(self):
         aux = []
         for aux_v_f in self.l_v_f:
             aux.append(aux_v_f.vf.label)
         return aux
 
     # Calcula a simulaçção para um vetor de entrada.
-    def calcula_simulacao(self, reg): 
+    def calculaSimulacao(self, reg): 
         res = []
         for aux_reg in reg:
-            aux = dict(zip(self.lista_antecedentes(), aux_reg))
+            aux = dict(zip(self.listaAntecedentes(), aux_reg))
             self.sim_v_f.inputs(aux) # Fornece valores
             self.sim_v_f.compute() # Calcula
             aux_res = self.sim_v_f.output[self.c_v_f.vf.label]
@@ -227,7 +247,7 @@ class SF:
         return res
     
     # Efetua n simulações e retorna o resultado.
-    def mc_simulacao(self, r=None, n=500, media=None): 
+    def mcSimulacao(self, r=None, n=500, media=None): 
         # r: matriz de correlações.
         # n: número de simulações.
         # Vetor de médias.
@@ -258,20 +278,27 @@ class SF:
         cov = aux_s @ r @ aux_s
         aux_mc = np.random.multivariate_normal(aux_media, cov, size=n)
 
-        return self.calcula_simulacao(aux_mc)
+        return self.calculaSimulacao(aux_mc)
 
     # Efetua simulação e retorna percentís bilaterais para um determinado alfa.
-    def ic_mc_simulacao(self, r=None, n=500, alfa=0.05):
-        ic = np.quantile(self.mc_simulacao(r, n),
+    def icMCSimulacao(self, r=None, n=500, alfa=0.05):
+        ic = np.quantile(self.mcSimulacao(r, n),
                          [alfa / 2, .5, 1 - alfa / 2])
         return ic
 
-    # Evento aleatório conforme a distribuição de Bernoulli
+    class evento:
+        def __init__(self, variavel):
+            # Variavel fuzzy.
+            self.variavel = variavel
+
+
+    # Evento aleatório conforme a distribuição de Bernoulli.
     class eventoBernoulli:
         # Inicializa evento
-        def __init__(self, p, f):
+        def __init__(self, p, f, variavel):
             # p: probabilidade de um evento favorável.
             # f: ponderador.
+            super().__init__(self, variavel)
             self.p = p
             self.f = 1 + f
         
@@ -282,23 +309,26 @@ class SF:
                aux = self.f
             return aux
  
-    # Evento aleatório conforme a distribuição de Poisson
+
+    # Evento aleatório conforme a distribuição de Poisson.
     class eventoPoisson:
-        # Inicializa evento
-        def __init__(self, l, f):
+        # Inicializa evento.
+        def __init__(self, l, f, variavel):
             # p: probabilidade de um evento favorável.
             # f: ponderador.
+            super().__init__(self, variavel)
             self.l = l
             self.f = f
         
-        # Retorna n*f ou 1 conforme a simulação
+        # Retorna n*f ou 1 conforme a simulação.
         def calculaF(self):
             aux = np.random.poisson(self.l, 1)
             return aux*self.f
         
     
-    # Lista de eventos
-    class lista_eventos:
+    # Lista de eventos.
+    class eventos:
+        # Inicializa lista de eventos.
         def __init__(self, n_variavel):
         # n_variavel: nome da variável.
             self.l_eventos = []
@@ -306,6 +336,8 @@ class SF:
         # Insere evento.
         def insere_evento(self, evento):
             self.l_eventos.append(evento)
+
+        # Processa eventos
 
 
 
