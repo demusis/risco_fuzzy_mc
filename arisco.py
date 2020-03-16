@@ -335,7 +335,14 @@ class variaveis:
     def obtemValor(self, num_variavel):
         return self.l_variaveis[num_variavel].obtemValor()
 
-    # Apresenta valores
+    # Obtêm valores
+    def obtemValores(self):
+        aux_valores = []
+        for aux_variavel in self.l_variaveis:
+            aux_valores.append(aux_variavel.obtemValor())
+        return aux_valores
+
+    # Apresenta variaveis
     def apresentaVariaveis(self):
         for aux_variavel in self.l_variaveis:
             aux_variavel.apresentaVariavel()
