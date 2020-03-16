@@ -23,21 +23,22 @@ aux_variaveis.insereVariavel(evaporacao_variavel)
 
 aux_variaveis.reiniciaVariaveis()
 
+
 # Cria eventos associados a municípios do Mato Grosso
 ## Evento 01 Cuiabá
-cuiaba_01_evento = arisco.eventoBernoulli(0.99) # p: 0.1
+cuiaba_01_evento = arisco.eventoBernoulli(0.5) # p: 0.1
 
 cuiaba_01_evento.insereVariavel(area_variavel, 0.11)
 cuiaba_01_evento.insereVariavel(evaporacao_variavel, 0.21)
 
 ## Evento 02 Cuiabá
-cuiaba_02_evento = arisco.eventoPoisson(20) # l: 2 
+cuiaba_02_evento = arisco.eventoPoisson(2) # l: 2 
 
 cuiaba_02_evento.insereVariavel(area_variavel, 0.12)
 cuiaba_02_evento.insereVariavel(evaporacao_variavel, 0.22)
 
 ## Evento 03 Cuiabá
-cuiaba_03_evento = arisco.eventoBernoulli(0.99) # p: 0.3
+cuiaba_03_evento = arisco.eventoBernoulli(0.6) # p: 0.3
 
 cuiaba_03_evento.insereVariavel(area_variavel, 0.13)
 cuiaba_03_evento.insereVariavel(evaporacao_variavel, 0.23)
@@ -113,6 +114,7 @@ i_01.basicoRegras()
 # Inicializa simulação
 i_01.inicializaSimulacao()
 
+# Calculos de teste
 print('--------------')
 print(aux_variaveis.obtemVariaveis()[0].obtemReferencia(), ' ', aux_variaveis.obtemVariaveis()[1].obtemReferencia())
 print('- Impacto ----')
@@ -129,3 +131,10 @@ print('- Impacto ----')
 aux_i = np.array([aux_variaveis.obtemValores()])
 print(i_01.calculaSimulacao(aux_i))
 print('--------------')
+
+# Cálculo
+# Cria município
+cuiaba_municipio = arisco.municipios('Cuiaba', aux_variaveis, cuiaba_eventos, i_01)
+print(cuiaba_municipio.calculaSimulacao())
+
+print(cuiaba_municipio.calculaMC(n=500))

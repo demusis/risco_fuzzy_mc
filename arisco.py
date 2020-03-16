@@ -274,11 +274,13 @@ class sistemaFuzzy:
 
 # Variável
 class variavel:
+    # Inicializa variável
     def __init__(self, n_variavel):
         # n_variavel: nome da variavel.
         self.n_variavel = n_variavel
         self.referencia_valor = float('nan')   # NaN ("not a number")
         self.valor = float('nan')   # NaN ("not a number")
+
     # Altera valor corrente
     def setaValor(self, valor):
         self.valor = valor
@@ -413,4 +415,26 @@ class eventos:
     def processaEventos(self):
         for aux_evento in self.l_eventos:
             aux_evento.ponderaVariaveis()
+
+class municipios:       
+    def __init__(self, nome, variaveis, eventos, sistema_fuzzy):
+        self.nome = nome
+        self.eventos = eventos
+        self.sistema_fuzzy = sistema_fuzzy
+        self.variaveis = variaveis
+
+    def calculaSimulacao(self):
+        aux_sf = np.array([self.variaveis.obtemValores()])
+        return self.sistema_fuzzy.calculaSimulacao(aux_sf)
+
+    def calculaMC(self, n=500, alfa=0.05):
+        res_mc = []
+        for r in range(n+1):
+            self.variaveis.reiniciaVariaveis()
+            self.eventos.processaEventos()
+            res_mc.append(self.calculaSimulacao())
+        return np.quantile(res_mc,
+                           [alfa / 2, .5, 1 - alfa / 2])
+
+
         
