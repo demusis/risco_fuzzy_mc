@@ -25,41 +25,41 @@ aux_variaveis.reiniciaVariaveis()
 
 
 # Cria eventos associados a municípios do Mato Grosso
-## Evento 01 Cuiabá
-cuiaba_01_evento = arisco.eventoBernoulli(0.5) # p: 0.1
+## Evento 01
+aux_01_evento = arisco.eventoBernoulli(0.5) # p: 0.1
 
-cuiaba_01_evento.insereVariavel(area_variavel, 0.11)
-cuiaba_01_evento.insereVariavel(evaporacao_variavel, 0.21)
+aux_01_evento.insereVariavel(area_variavel, 0.11)
+aux_01_evento.insereVariavel(evaporacao_variavel, 0.21)
 
-## Evento 02 Cuiabá
-cuiaba_02_evento = arisco.eventoPoisson(2) # l: 2 
+## Evento 02
+aux_02_evento = arisco.eventoPoisson(2) # l: 2 
 
-cuiaba_02_evento.insereVariavel(area_variavel, 0.12)
-cuiaba_02_evento.insereVariavel(evaporacao_variavel, 0.22)
+aux_02_evento.insereVariavel(area_variavel, 0.12)
+aux_02_evento.insereVariavel(evaporacao_variavel, 0.22)
 
-## Evento 03 Cuiabá
-cuiaba_03_evento = arisco.eventoBernoulli(0.6) # p: 0.3
+## Evento 03
+aux_03_evento = arisco.eventoBernoulli(0.6) # p: 0.3
 
-cuiaba_03_evento.insereVariavel(area_variavel, 0.13)
-cuiaba_03_evento.insereVariavel(evaporacao_variavel, 0.23)
+aux_03_evento.insereVariavel(area_variavel, 0.13)
+aux_03_evento.insereVariavel(evaporacao_variavel, 0.23)
 
-# Inicializa lista de eventos associada a Cuiaba.
-cuiaba_eventos = arisco.eventos()
+# Inicializa lista de eventos
+aux_eventos = arisco.eventos()
 
 # Insere eventos
-cuiaba_eventos.insereEvento(cuiaba_01_evento)
-cuiaba_eventos.insereEvento(cuiaba_02_evento)
-cuiaba_eventos.insereEvento(cuiaba_03_evento)
+aux_eventos.insereEvento(aux_01_evento)
+aux_eventos.insereEvento(aux_02_evento)
+aux_eventos.insereEvento(aux_03_evento)
 
 print('Referência')
 aux_variaveis.apresentaVariaveis()
 
 print('\r\nApós processar os eventos')
-cuiaba_eventos.processaEventos()
+aux_eventos.processaEventos()
 aux_variaveis.apresentaVariaveis()
 
 print('\r\nApós processar os eventos novamente')
-cuiaba_eventos.processaEventos()
+aux_eventos.processaEventos()
 aux_variaveis.apresentaVariaveis()
 
 print('\r\nReinicializa as variáveis')
@@ -67,7 +67,7 @@ aux_variaveis.reiniciaVariaveis()
 aux_variaveis.apresentaVariaveis()
 
 print('\r\nApós processar os eventos')
-cuiaba_eventos.processaEventos()
+aux_eventos.processaEventos()
 aux_variaveis.apresentaVariaveis()
 
 
@@ -133,8 +133,12 @@ print(i_01.calculaSimulacao(aux_i))
 print('--------------')
 
 # Cálculo
-# Cria município
-cuiaba_municipio = arisco.municipio('Cuiaba', aux_variaveis, cuiaba_eventos, i_01)
+# Cria municípios
+cuiaba_municipio = arisco.municipio('Cuiaba', aux_variaveis, aux_eventos, i_01)
+sinop_municipio = arisco.municipio('Sinop', aux_variaveis, aux_eventos, i_01)
+primavera_municipio = arisco.municipio('Primavera', aux_variaveis, aux_eventos, i_01)
+
+# Teste
 print(cuiaba_municipio.calculaSimulacao())
 
 print('--------------')
@@ -142,14 +146,25 @@ cuiaba_municipio.setaReferencias([11, 12])
 print(cuiaba_municipio.obtemValores())
 print(cuiaba_municipio.calculaMC(n=5))
 
+# Cria conjunto de municipios e carrega dataframe
 mt_municipios = arisco.municipios('municipios.xlsx')
+
+# Insere municipios
 mt_municipios.insereMunicipio(cuiaba_municipio)
+mt_municipios.insereMunicipio(sinop_municipio)
+mt_municipios.insereMunicipio(primavera_municipio)
+
 
 print(mt_municipios.obtemDadoMunicipio('Cuiaba'))
 
 print('--------------')
 print(mt_municipios.obtemDadosMunicipios())
-mt_municipios.calculaSimulacao()
+mt_municipios.calculaSimulacoes()
 print(mt_municipios.obtemDadosMunicipios())
 
-print(mt_municipios.obtemMunicipio('Cuiaba').nome)
+print('--------------')
+mt_municipios.calculaMC()
+print(mt_municipios.obtemDadosMunicipios())
+
+mt_municipios.gravaResultados('resultados.xlsx')
+

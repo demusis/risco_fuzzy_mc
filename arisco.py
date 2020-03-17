@@ -435,7 +435,7 @@ class municipio:
     def obtemValores(self):
         return self.variaveis.obtemValores()
 
-    # Calcula uma simulação.
+    # Calcula simulação.
     def calculaSimulacao(self):
         aux_sf = np.array([self.variaveis.obtemValores()])
         return self.sistema_fuzzy.calculaSimulacao(aux_sf)
@@ -444,7 +444,7 @@ class municipio:
     def calculaMC(self, n=500, alfa=0.05):
         res_mc = []
         for r in range(n+1):
-            self.variaveis.reiniciaVariaveis()
+            self.variaveis.reiniciaVariaveis() # Retorna os valores as referências.
             self.eventos.processaEventos()
             res_mc.append(self.calculaSimulacao())
         return np.quantile(res_mc,
@@ -455,7 +455,7 @@ class municipios:
     # Carrega a planilha com os dados.
     def __init__(self, arquivo):
         self.dados_municipios = pd.read_excel(arquivo)
-        self.dados_municipios.set_index('nome', inplace=True)
+        self.dados_municipios.set_index('id', drop = False, inplace=True)
         self.l_municipios = []
 
     # Localiza e retorna o município da lista.
@@ -463,7 +463,7 @@ class municipios:
         for municipio in self.l_municipios:
             if (municipio.nome == nome_municipio):
                 return municipio
-        return None        
+        raise NameError("Objeto Municipio não definido!")
     
     # Obtêm dados de um município.
     def obtemDadoMunicipio(self, nome_municipio):
@@ -477,9 +477,34 @@ class municipios:
     def insereMunicipio(self, municipio):
         self.l_municipios.append(municipio)
 
-    # Calcula uma coluna nova.
-    def calculaSimulacao(self):
-        def soma(row):
-            return row['area'] + row['evaporacao']
-        self.dados_municipios['soma'] = self.dados_municipios.apply(lambda row: soma(row), axis=1)
+    # Calcula simulações.
+    def calculaSimulacoes(self):
+        def estimaConsequente(row):
+            aux_municipio = self.obtemMunicipio(row['id'])
+            aux_municipio.setaReferencias(row[1:].to_numpy())
+            return aux_municipio.calculaSimulacao()[0]
+        self.dados_municipios['s'] = self.dados_municipios.apply(lambda row: estimaConsequente(row), axis=1)
 
+    # Calcula Monte Carlo.
+    def calculaMC(self, n=500, alfa=0.05):
+        def MC(row):
+            aux_municipio = self.obtemMunicipio(row['id'])
+            aux_municipio.setaReferencias(row[1:].to_numpy())
+            return aux_municipio.calculaMC(n, alfa)
+        def li(row):
+            return row['mc'][0]
+        def med(row):
+            return row['mc'][1]
+        def ls(row):
+            return row['mc'][2]     
+
+        self.dados_municipios['mc'] = self.dados_municipios.apply(lambda row: MC(row), axis=1)
+        self.dados_municipios['mc_li'] = self.dados_municipios.apply(lambda row: li(row), axis=1)
+        self.dados_municipios['mc_med'] = self.dados_municipios.apply(lambda row: med(row), axis=1)
+        self.dados_municipios['mc_ls'] = self.dados_municipios.apply(lambda row: ls(row), axis=1)
+        
+        self.dados_municipios.drop('mc', axis=1, inplace=True)
+
+    # Grava dataframe
+    def gravaResultados(self, arquivo):
+        self.dados_municipios.to_excel(arquivo)
