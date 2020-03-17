@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
@@ -288,6 +289,7 @@ class variavel:
     # Altera valor de referência
     def setaReferencia(self, valor):
         self.referencia_valor = valor
+        self.valor = valor
 
     # Retorna referência.
     def obtemReferencia(self):
@@ -310,6 +312,7 @@ class variaveis:
     # Inicializa lista de variaveis.
     def __init__(self):
         self.l_variaveis = []
+        self.dados = None
 
     # Insere variavel.
     def insereVariavel(self, variavel):
@@ -320,8 +323,8 @@ class variaveis:
         for aux_variavel in self.l_variaveis:
             aux_variavel.reiniciaValor()
 
-    # Reinicia referências
-    def reiniciaReferencias(self, referencias):
+    # Seta referências
+    def setaReferencias(self, referencias):
         for aux_n, aux_variavel in enumerate(self.l_variaveis):
             aux_variavel.setaReferencia(referencias[aux_n])
 
@@ -416,17 +419,28 @@ class eventos:
         for aux_evento in self.l_eventos:
             aux_evento.ponderaVariaveis()
 
-class municipios:       
+class municipio:       
+    # Inicializa um município
     def __init__(self, nome, variaveis, eventos, sistema_fuzzy):
         self.nome = nome
         self.eventos = eventos
         self.sistema_fuzzy = sistema_fuzzy
         self.variaveis = variaveis
 
+    # Seta referências
+    def setaReferencias(self, x):
+        self.variaveis.setaReferencias(x)
+
+    # Obtêm valores
+    def obtemValores(self):
+        return self.variaveis.obtemValores()
+
+    # Calcula uma simulação
     def calculaSimulacao(self):
         aux_sf = np.array([self.variaveis.obtemValores()])
         return self.sistema_fuzzy.calculaSimulacao(aux_sf)
 
+    # Monte Carlo
     def calculaMC(self, n=500, alfa=0.05):
         res_mc = []
         for r in range(n+1):
@@ -437,4 +451,28 @@ class municipios:
                            [alfa / 2, .5, 1 - alfa / 2])
 
 
-        
+class municipios:
+    # Carrega a planilha com os dados
+    def __init__(self, arquivo):
+        self.dados_municipios = pd.read_excel(arquivo)
+        self.dados_municipios.set_index('nome', inplace=True)
+        self.l_municipios = []
+
+    # Obtêm dados de um município
+    def obtemDadoMunicipio(self, nome_municipio):
+        return self.dados_municipios.loc[nome_municipio].values.flatten().tolist()
+
+    # Obtêm dados dos municípios
+    def obtemDadosMunicipios(self):
+        return self.dados_municipios
+
+    #  Insere município
+    def insereMunicipio(self, municipio):
+        self.l_municipios.append(evento)
+
+    # Calcula uma coluna nova
+    def calculaSimulacao(self):
+        def soma(row):
+            return row['area'] + row['evaporacao']
+        self.dados_municipios['soma'] = self.dados_municipios.apply(lambda row: soma(row), axis=1)
+

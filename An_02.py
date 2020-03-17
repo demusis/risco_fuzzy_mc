@@ -134,7 +134,20 @@ print('--------------')
 
 # Cálculo
 # Cria município
-cuiaba_municipio = arisco.municipios('Cuiaba', aux_variaveis, cuiaba_eventos, i_01)
+cuiaba_municipio = arisco.municipio('Cuiaba', aux_variaveis, cuiaba_eventos, i_01)
 print(cuiaba_municipio.calculaSimulacao())
 
-print(cuiaba_municipio.calculaMC(n=500))
+print('--------------')
+cuiaba_municipio.setaReferencias([11, 12])
+print(cuiaba_municipio.obtemValores())
+print(cuiaba_municipio.calculaMC(n=5))
+
+mt_municipios = arisco.municipios('municipios.xlsx')
+mt_municipios.insereMunicipio(cuiaba_municipio)
+
+print(mt_municipios.obtemDadoMunicipio('Cuiaba'))
+
+print('--------------')
+print(mt_municipios.obtemDadosMunicipios())
+mt_municipios.calculaSimulacao()
+print(mt_municipios.obtemDadosMunicipios())
