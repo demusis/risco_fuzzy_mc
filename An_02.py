@@ -151,3 +151,5 @@ print('--------------')
 print(mt_municipios.obtemDadosMunicipios())
 mt_municipios.calculaSimulacao()
 print(mt_municipios.obtemDadosMunicipios())
+
+print(mt_municipios.obtemMunicipio('Cuiaba').nome)

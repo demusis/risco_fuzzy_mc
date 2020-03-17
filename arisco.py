@@ -273,20 +273,20 @@ class sistemaFuzzy:
         return ic
 
 
-# Variável
+# Variável.
 class variavel:
-    # Inicializa variável
+    # Inicializa variável.
     def __init__(self, n_variavel):
         # n_variavel: nome da variavel.
         self.n_variavel = n_variavel
         self.referencia_valor = float('nan')   # NaN ("not a number")
         self.valor = float('nan')   # NaN ("not a number")
 
-    # Altera valor corrente
+    # Altera valor corrente.
     def setaValor(self, valor):
         self.valor = valor
 
-    # Altera valor de referência
+    # Altera valor de referência.
     def setaReferencia(self, valor):
         self.referencia_valor = valor
         self.valor = valor
@@ -299,11 +299,11 @@ class variavel:
     def obtemValor(self):
         return self.valor
 
-    # Reinicia o valor corrente
+    # Reinicia o valor corrente.
     def reiniciaValor(self):
         self.valor = self.referencia_valor
 
-    # Apresenta variável
+    # Apresenta variável.
     def apresentaVariavel(self):
         print('Variável: ', self.n_variavel, ', Ref.: ', self.obtemReferencia(), ', Valor: ', self.obtemValor())   
 
@@ -318,21 +318,21 @@ class variaveis:
     def insereVariavel(self, variavel):
         self.l_variaveis.append(variavel)
 
-    # Reinicia variaveis
+    # Reinicia variaveis.
     def reiniciaVariaveis(self):
         for aux_variavel in self.l_variaveis:
             aux_variavel.reiniciaValor()
 
-    # Seta referências
+    # Seta referências.
     def setaReferencias(self, referencias):
         for aux_n, aux_variavel in enumerate(self.l_variaveis):
             aux_variavel.setaReferencia(referencias[aux_n])
 
-    # Obtêm variáveis
+    # Obtêm variáveis.
     def obtemVariaveis(self):
         return self.l_variaveis
 
-    # Obtêm variável
+    # Obtêm variável.
     def obtemVariavel(self, num_variavel):
         return self.l_variaveis[num_variavel]
 
@@ -340,23 +340,23 @@ class variaveis:
     def obtemValor(self, num_variavel):
         return self.l_variaveis[num_variavel].obtemValor()
 
-    # Obtêm valores
+    # Obtêm valores.
     def obtemValores(self):
         aux_valores = []
         for aux_variavel in self.l_variaveis:
             aux_valores.append(aux_variavel.obtemValor())
         return aux_valores
 
-    # Apresenta variaveis
+    # Apresenta variaveis.
     def apresentaVariaveis(self):
         for aux_variavel in self.l_variaveis:
             aux_variavel.apresentaVariavel()
 
 
 class evento:
-    # Inicialisa evento base
+    # Inicialisa evento base.
     def __init__(self):
-        # Lista de variáveis
+        # Lista de variáveis.
         self.l_variaveis = []
 
     # Insere na lista uma variável afetada pelo evento.
@@ -364,11 +364,11 @@ class evento:
         aux_evento_ponderado = {'variavel': variavel, 'ponderador': ponderador}
         self.l_variaveis.append(aux_evento_ponderado)        
 
-    # Simula um evento
+    # Simula um evento.
     def simulaEvento(self):
-        return 0 # Padrão: evento impossível
+        return 0 # Padrão: evento impossível.
 
-    # Simula o evento e pondera o seu efeito nas variáveis inseridas
+    # Simula o evento e pondera o seu efeito nas variáveis inseridas.
     def ponderaVariaveis(self):
         oc_evento = self.simulaEvento()
         if oc_evento!=0: 
@@ -386,7 +386,7 @@ class eventoBernoulli(evento):
         super().__init__()
         self.p = p
     
-    # Simula evento binomial
+    # Simula evento binomial.
     def simulaEvento(self):
         return np.random.binomial(1, p=self.p)
 
@@ -399,7 +399,7 @@ class eventoPoisson(evento):
         super().__init__()
         self.l = l
     
-    # Simula o número de eventos favoráveis
+    # Simula o número de eventos favoráveis.
     def calculaF(self):
         return np.random.poisson(self.l, 1)
 
@@ -414,33 +414,33 @@ class eventos:
     def insereEvento(self, evento):
         self.l_eventos.append(evento)
 
-    # Processa eventos
+    # Processa eventos.
     def processaEventos(self):
         for aux_evento in self.l_eventos:
             aux_evento.ponderaVariaveis()
 
 class municipio:       
-    # Inicializa um município
+    # Inicializa um município.
     def __init__(self, nome, variaveis, eventos, sistema_fuzzy):
         self.nome = nome
         self.eventos = eventos
         self.sistema_fuzzy = sistema_fuzzy
         self.variaveis = variaveis
 
-    # Seta referências
+    # Seta referências.
     def setaReferencias(self, x):
         self.variaveis.setaReferencias(x)
 
-    # Obtêm valores
+    # Obtêm valores.
     def obtemValores(self):
         return self.variaveis.obtemValores()
 
-    # Calcula uma simulação
+    # Calcula uma simulação.
     def calculaSimulacao(self):
         aux_sf = np.array([self.variaveis.obtemValores()])
         return self.sistema_fuzzy.calculaSimulacao(aux_sf)
 
-    # Monte Carlo
+    # Monte Carlo.
     def calculaMC(self, n=500, alfa=0.05):
         res_mc = []
         for r in range(n+1):
@@ -452,25 +452,32 @@ class municipio:
 
 
 class municipios:
-    # Carrega a planilha com os dados
+    # Carrega a planilha com os dados.
     def __init__(self, arquivo):
         self.dados_municipios = pd.read_excel(arquivo)
         self.dados_municipios.set_index('nome', inplace=True)
         self.l_municipios = []
 
-    # Obtêm dados de um município
+    # Localiza e retorna o município da lista.
+    def obtemMunicipio(self, nome_municipio):
+        for municipio in self.l_municipios:
+            if (municipio.nome == nome_municipio):
+                return municipio
+        return None        
+    
+    # Obtêm dados de um município.
     def obtemDadoMunicipio(self, nome_municipio):
         return self.dados_municipios.loc[nome_municipio].values.flatten().tolist()
 
-    # Obtêm dados dos municípios
+    # Obtêm dados dos municípios.
     def obtemDadosMunicipios(self):
         return self.dados_municipios
 
-    #  Insere município
+    #  Insere município.
     def insereMunicipio(self, municipio):
-        self.l_municipios.append(evento)
+        self.l_municipios.append(municipio)
 
-    # Calcula uma coluna nova
+    # Calcula uma coluna nova.
     def calculaSimulacao(self):
         def soma(row):
             return row['area'] + row['evaporacao']
