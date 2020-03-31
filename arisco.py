@@ -453,10 +453,25 @@ class municipio:
 
 class municipios:
     # Carrega a planilha com os dados.
-    def __init__(self, arquivo):
-        self.dados_municipios = pd.read_excel(arquivo)
+    def __init__(self, arquivo, aux_variaveis, aux_eventos, aux_fuzzy):
+
+        self.dados_municipios = pd.read_excel(arquivo) # Carrega rol de municípios.
         self.dados_municipios.set_index('id', drop = False, inplace=True)
         self.l_municipios = []
+        self.criaMunicipios(aux_variaveis, aux_eventos, aux_fuzzy)
+
+    # Insere município.
+    def insereMunicipio(self, municipio):
+        self.l_municipios.append(municipio)
+
+    # Cria municípios a partir da planilha
+    def criaMunicipios(self, aux_variaveis, aux_eventos, aux_fuzzy):
+        def criaMunicipio(row):
+            aux_municipio = municipio(row['id'], aux_variaveis, aux_eventos, aux_fuzzy)
+            self.insereMunicipio(aux_municipio)
+
+        self.dados_municipios.apply(lambda row:criaMunicipio(row), axis=1)
+
 
     # Localiza e retorna o município da lista.
     def obtemMunicipio(self, nome_municipio):
@@ -472,10 +487,6 @@ class municipios:
     # Obtêm dados dos municípios.
     def obtemDadosMunicipios(self):
         return self.dados_municipios
-
-    #  Insere município.
-    def insereMunicipio(self, municipio):
-        self.l_municipios.append(municipio)
 
     # Calcula simulações.
     def calculaSimulacoes(self):
