@@ -4,7 +4,7 @@ import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
 
-# Varíável Fuzzy Gaussiana Padronizada -
+# Varíável Fuzzy Gaussiana Padronizada
 class variavelFGP:
     # Inicializa VFGP
     def __init__(self, minm, maxm, n_variavel, media=None, dp=None, dados=None, passo=0.01, likert=3, tipo='antecedente'):
@@ -35,8 +35,7 @@ class variavelFGP:
               self.dp = ((maxm - minm)**2/12)**0.5
               media = self.media
               dp = self.dp
-
-        
+       
         if tipo == 'consequente':
             self.vf = ctrl.Consequent(np.arange(minm, maxm, passo), n_variavel)
         else:
@@ -450,11 +449,9 @@ class municipio:
         return np.quantile(res_mc,
                            [alfa / 2, .5, 1 - alfa / 2])
 
-
 class municipios:
     # Carrega a planilha com os dados.
     def __init__(self, arquivo, aux_variaveis, aux_eventos, aux_fuzzy):
-
         self.dados_municipios = pd.read_excel(arquivo) # Carrega rol de municípios.
         self.dados_municipios.set_index('id', drop = False, inplace=True)
         self.l_municipios = []
@@ -469,9 +466,7 @@ class municipios:
         def criaMunicipio(row):
             aux_municipio = municipio(row['id'], aux_variaveis, aux_eventos, aux_fuzzy)
             self.insereMunicipio(aux_municipio)
-
         self.dados_municipios.apply(lambda row:criaMunicipio(row), axis=1)
-
 
     # Localiza e retorna o município da lista.
     def obtemMunicipio(self, nome_municipio):

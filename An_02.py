@@ -9,6 +9,7 @@ import seaborn as sns
 import arisco
 
 #%% Cria variáveis
+# O valor de referencia é o inicial
 area_variavel = arisco.variavel('Area')
 area_variavel.setaReferencia(10)
 
@@ -16,7 +17,7 @@ evaporacao_variavel = arisco.variavel('Evaporacao')
 evaporacao_variavel.setaReferencia(12)
 
 
-#%% Cria variáveis Cria lista de variaveis
+#%% Cria lista de variaveis
 aux_variaveis = arisco.variaveis()
 
 aux_variaveis.insereVariavel(area_variavel)
@@ -26,19 +27,21 @@ aux_variaveis.reiniciaVariaveis()
 
 
 #%% Cria eventos associados a municípios do Mato Grosso.
-## Evento 01.
+## Evento 01: Bernoulli.
+# Evento com probabilidade de ocorrer um evento favorável.
 aux_01_evento = arisco.eventoBernoulli(0.5) # p: 0.5
-
-aux_01_evento.insereVariavel(area_variavel, 0.11) # Ponderador: 0.11; será multiplicado pelo número de eventos.
+# Os ponderadores multiplicam o valor das variáveis no caso de evento favorável.
+aux_01_evento.insereVariavel(area_variavel, 0.11) 
 aux_01_evento.insereVariavel(evaporacao_variavel, 0.21)
 
-## Evento 02.
+## Evento 02: Poisson.
+# Média do número de eventos favoráveispor unidade de tempo/espaço.
 aux_02_evento = arisco.eventoPoisson(2) # lambda: 2.
-
+# Os ponderadores multiplicam o valor das variáveis para cada evento favorável.
 aux_02_evento.insereVariavel(area_variavel, 0.12)
 aux_02_evento.insereVariavel(evaporacao_variavel, 0.22)
 
-## Evento 03.
+## Evento 03: Bernoulli.
 aux_03_evento = arisco.eventoBernoulli(0.6) # p: 0.3.
 
 aux_03_evento.insereVariavel(area_variavel, 0.13)
@@ -77,35 +80,35 @@ Fuzzy
 """
 
 
-#%% Cria variáveis Carrega dados
-df = pd.read_excel('Dados_brutos.xlsx', sheet_name='TOTAL') # Carrega a planilha com os dados
+#%% Cria variáveis Carrega dados.
+df = pd.read_excel('Dados_brutos.xlsx', sheet_name='TOTAL') # Carrega a planilha com os dados.
 print(df.head())
 
 
-#%% Cria variáveis Cria Sistema fuzzy com a variável de saída "Impacto"
+#%% Cria variáveis Cria Sistema fuzzy com a variável de saída "Impacto".
 i_01 = arisco.sistemaFuzzy(0, 100, n_variavel="Impacto")
 
 
-#%% Cria a variável de entrada "Área"
-## Estatísticas descritivas
+#%% Cria a variável de entrada "Área".
+## Estatísticas descritivas.
 print(df.Km2.mean(), df.Km2.std(), 0, df.Km2.max())
 print(df.Km2.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='linear'))
-sns.distplot(df.Km2) # histograma
+sns.distplot(df.Km2) # histograma.
 
-## Cria variável fuzzy triangular
+## Cria variável fuzzy triangular.
 Area = arisco.variavelFTP(0, df.Km2.max(), 'Area', dados=df.Km2)
 
-## Insere variável no sistema fuzzy
+## Insere variável no sistema fuzzy.
 i_01.insereVariavel(Area)
 
 
-#%% Cria a variável de entrada "Evaporacao"
-## Estatísticas descritivas
+#%% Cria a variável de entrada "Evaporacao".
+## Estatísticas descritivas.
 print(df.Evaporacao.mean(), df.Evaporacao.std(), 0, df.Evaporacao.max())
 print(df.Evaporacao.quantile(q=[0.05, 0.25, 0.50, 0.75, 0.95], interpolation='linear'))
-sns.distplot(df.Evaporacao) # histograma
+sns.distplot(df.Evaporacao) # histograma.
 
-## Cria variável fuzzy gaussiana
+## Cria variável fuzzy gaussiana.
 Evaporacao = arisco.variavelFGP(df.Evaporacao.min(), df.Evaporacao.max(), 'Evaporacao', dados=df.Evaporacao)
 i_01.insereVariavel(Evaporacao)
 
