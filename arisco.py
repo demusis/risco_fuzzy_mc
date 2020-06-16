@@ -124,9 +124,19 @@ class variavelFTP:
         try:
            self.media = dados.mean()
            self.dp = dados.std()
+           n05 = dados.quantile(q=0.05, interpolation='linear')
+           n25 = dados.quantile(q=0.25, interpolation='linear')
+           n50 = dados.quantile(q=0.50, interpolation='linear')
+           n75 = dados.quantile(q=0.75, interpolation='linear')
+           n95 = dados.quantile(q=0.25, interpolation='linear')
         except Exception:
            self.media = (minm+maxm)/2
            self.dp = ((maxm - minm)**2/12)**0.5        
+           n05 = minm + (maxm-minm)*0.05
+           n25 = minm + (maxm-minm)*0.25
+           n50 = minm + (maxm-minm)*0.50
+           n75 = minm + (maxm-minm)*0.75
+           n95 = minm + (maxm-minm)*0.95
         
         if (tipo == 'consequente'):
             self.vf = ctrl.Consequent(np.arange(minm, maxm, passo), n_variavel)
@@ -134,15 +144,15 @@ class variavelFTP:
             self.vf = ctrl.Antecedent(np.arange(minm, maxm, passo), n_variavel)
 
         if (likert==5):
-            self.vf['muito baixo'] = fuzz.trimf(self.vf.universe, [minm, minm, dados.quantile(q=0.25, interpolation='linear')])
-            self.vf['baixo'] = fuzz.trimf(self.vf.universe, np.asarray(dados.quantile(q=[0.05, 0.25, 0.50], interpolation='linear')))
-            self.vf['medio'] = fuzz.trimf(self.vf.universe, np.asarray(dados.quantile(q=[0.25, 0.50, 0.75], interpolation='linear')))
-            self.vf['alto'] = fuzz.trimf(self.vf.universe, np.asarray(dados.quantile(q=[0.50, 0.75, 0.95], interpolation='linear')))
-            self.vf['muito alto'] = fuzz.trimf(self.vf.universe, [dados.quantile(q=0.75, interpolation='linear'), maxm, maxm])
+            self.vf['muito baixo'] = fuzz.trimf(self.vf.universe, [minm, minm, n25])
+            self.vf['baixo'] = fuzz.trimf(self.vf.universe, [n05, n25, n50])
+            self.vf['medio'] = fuzz.trimf(self.vf.universe, [n25, n50, n75])
+            self.vf['alto'] = fuzz.trimf(self.vf.universe, [n50, n75, n95])
+            self.vf['muito alto'] = fuzz.trimf(self.vf.universe, [n75, maxm, maxm])
         elif (likert==3):
-            self.vf['baixo'] = fuzz.trimf(self.vf.universe, [minm, minm, dados.quantile(q=0.50, interpolation='linear')])
-            self.vf['medio'] = fuzz.trimf(self.vf.universe, [minm, dados.quantile(q=0.50, interpolation='linear'), maxm])
-            self.vf['alto'] = fuzz.trimf(self.vf.universe, [dados.quantile(q=0.50, interpolation='linear'), maxm, maxm])
+            self.vf['baixo'] = fuzz.trimf(self.vf.universe, [minm, minm, n50])
+            self.vf['medio'] = fuzz.trimf(self.vf.universe, [minm, n50, maxm])
+            self.vf['alto'] = fuzz.trimf(self.vf.universe, [n50, maxm, maxm])
         elif (likert==2):
             self.vf['baixo'] = fuzz.trimf(self.vf.universe, [minm, minm, maxm])
             self.vf['alto'] = fuzz.trimf(self.vf.universe, [minm, maxm, maxm])

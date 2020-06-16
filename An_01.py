@@ -114,9 +114,7 @@ i_01.basicoRegras()
 # Inicializa simulação
 i_01.inicializaSimulacao()
 
-print('--------------')
-print(aux_variaveis.obtemVariaveis()[0].obtemReferencia(), ' ', aux_variaveis.obtemVariaveis()[1].obtemReferencia())
-print('- Impacto ----')
+
 # Área e evaporação.
 aux_i = np.array([[aux_variaveis.obtemVariaveis()[0].obtemReferencia(), 
                    aux_variaveis.obtemVariaveis()[1].obtemReferencia()]])
